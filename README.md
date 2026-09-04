@@ -1,6 +1,6 @@
 # 🎟️ NeonPulse Ticketing Platform — Entrega Final Consolidada
 
-[![Java CI with Maven and JaCoCo](https://github.com/your-username/Fundamentos_de_Java_Globant_Talento_Ready/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/Fundamentos_de_Java_Globant_Talento_Ready/actions)
+[![Java CI with Maven and JaCoCo](https://github.com/LudwigEspinosa/Fundamentos_de_Java_Globant_Talento_Ready/actions/workflows/ci.yml/badge.svg)](https://github.com/LudwigEspinosa/Fundamentos_de_Java_Globant_Talento_Ready/actions)
 [![Spring Boot 3](https://img.shields.io/badge/Spring%20Boot-3.2.3-6DB33F.svg)](https://spring.io/projects/spring-boot)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791.svg)](https://www.postgresql.org/)
 [![Docker Compose](https://img.shields.io/badge/Docker-Compose-2496ED.svg)](https://www.docker.com/)
@@ -14,15 +14,15 @@
 
 ---
 
-## 📋 Resumen Integral de Hitos del Programa
+## 📋 Resumen Integral de Hitos y Ramas del Repositorio
 
-| Hito | Dimensión Evaluada | Tecnologías Clave | Logros y Cumplimiento Técnico |
-| :---: | :--- | :--- | :--- |
-| **Hito 1** | **Backend / Core de Dominio Puro** | Java 17+, JUnit 5, Mockito 5, JaCoCo | • Modelo de dominio puro en Java sin acoplamiento a frameworks.<br>• Suite automatizada bajo el **Patrón AAA (Arrange, Act, Assert)**.<br>• Excepciones de negocio y dobles de prueba con Mockito.<br>• **100% de cobertura lógica (Line & Branch Coverage)** con JaCoCo. |
-| **Hito 2** | **Frontend Dinámico** | TypeScript (Strict), Vite, HTML5, CSS3 | • **Tipado hermético en TS:** Cero uso de `any`, enums e interfaces estrictas.<br>• **Renderizado seguro del DOM:** Guardias de tipo contra nulidad y captura con `preventDefault()`.<br>• **Asincronía moderna:** Funciones con `async/await`, bloques `try/catch/finally` y estados de carga. |
-| **Hito 3** | **Arquitectura Limpia & DDD** | Java 17+ Records, Clean Architecture, DDD | • **Separación en capas desacopladas:** `domain` (puro), `application` (casos de uso) e `infrastructure` (adaptadores).<br>• **Patrones tácticos DDD:** Entidades, Aggregate Roots y Value Objects inmutables con `record` (`Email`, `Money`, `SeatCapacity`, IDs).<br>• **Contratos de Repositorios:** Inyección por constructor y casos de uso POJO. |
-| **Hito 4** | **Microservicios, Persistencia & Docker** | Spring Boot 3, PostgreSQL, JPA, Docker Compose | • **Endpoints REST Semánticos:** `/api/v1/events` y `/api/v1/bookings` con `@RestControllerAdvice` centralizado.<br>• **Persistencia Relacional Real:** PostgreSQL 16 con `docker-compose.yml` y mapeo JPA/Hibernate con `JpaRepository`.<br>• **OpenAPI y Perfiles:** Swagger-UI activo en `dev` y herméticamente bloqueado en `prod`. |
-| **Hito Final** | **Integración Full-Stack & Producción** | Full-Stack Integration, CORS, Security | • **Ciclo End-to-End Real:** Cliente TypeScript conectado con `fetch` al backend Spring Boot y PostgreSQL.<br>• **Políticas CORS:** Configuración perimetral libre de bloqueos de origen cruzado.<br>• **Seguridad de Producción:** Exclusión absoluta de credenciales en Git (`.env.example`), `.gitignore` estricto y Swagger aislado por perfiles. |
+| Hito | Dimensión Evaluada | Tecnologías Clave | Logros y Cumplimiento Técnico | Rama en GitHub |
+| :---: | :--- | :--- | :--- | :---: |
+| **Hito 1** | **Backend / Core de Dominio Puro** | Java 17+, JUnit 5, Mockito 5, JaCoCo | • Modelo de dominio puro en Java sin acoplamiento a frameworks.<br>• Suite automatizada bajo el **Patrón AAA (Arrange, Act, Assert)**.<br>• Excepciones de negocio y dobles de prueba con Mockito.<br>• **100% de cobertura lógica (Line & Branch Coverage)** con JaCoCo. | [🌿 **`Hito1`**](https://github.com/LudwigEspinosa/Fundamentos_de_Java_Globant_Talento_Ready/tree/Hito1) |
+| **Hito 2** | **Frontend Dinámico** | TypeScript (Strict), Vite, HTML5, CSS3 | • **Tipado hermético en TS:** Cero uso de `any`, enums e interfaces estrictas.<br>• **Renderizado seguro del DOM:** Guardias de tipo contra nulidad y captura con `preventDefault()`.<br>• **Asincronía moderna:** Funciones con `async/await`, bloques `try/catch/finally` y estados de carga. | [🌿 **`Hito2`**](https://github.com/LudwigEspinosa/Fundamentos_de_Java_Globant_Talento_Ready/tree/Hito2) |
+| **Hito 3** | **Arquitectura Limpia & DDD** | Java 17+ Records, Clean Architecture, DDD | • **Separación en capas desacopladas:** `domain` (puro), `application` (casos de uso) e `infrastructure` (adaptadores).<br>• **Patrones tácticos DDD:** Entidades, Aggregate Roots y Value Objects inmutables con `record` (`Email`, `Money`, `SeatCapacity`, IDs).<br>• **Contratos de Repositorios:** Inyección por constructor y casos de uso POJO. | [🌿 **`Hito3`**](https://github.com/LudwigEspinosa/Fundamentos_de_Java_Globant_Talento_Ready/tree/Hito3) |
+| **Hito 4** | **Microservicios, Persistencia & Docker** | Spring Boot 3, PostgreSQL, JPA, Docker Compose | • **Endpoints REST Semánticos:** `/api/v1/events` y `/api/v1/bookings` con `@RestControllerAdvice` centralizado.<br>• **Persistencia Relacional Real:** PostgreSQL 16 con `docker-compose.yml` y mapeo JPA/Hibernate con `JpaRepository`.<br>• **OpenAPI y Perfiles:** Swagger-UI activo en `dev` y herméticamente bloqueado en `prod`. | [🌿 **`Hito4`**](https://github.com/LudwigEspinosa/Fundamentos_de_Java_Globant_Talento_Ready/tree/Hito4) |
+| **Hito Final** | **Integración Full-Stack & Producción** | Full-Stack Integration, CORS, Security | • **Ciclo End-to-End Real:** Cliente TypeScript conectado con `fetch` al backend Spring Boot y PostgreSQL.<br>• **Políticas CORS:** Configuración perimetral libre de bloqueos de origen cruzado.<br>• **Seguridad de Producción:** Exclusión absoluta de credenciales en Git (`.env.example`), `.gitignore` estricto y Swagger aislado por perfiles. | [🌿 **`Final`**](https://github.com/LudwigEspinosa/Fundamentos_de_Java_Globant_Talento_Ready/tree/Final) |
 
 ---
 
