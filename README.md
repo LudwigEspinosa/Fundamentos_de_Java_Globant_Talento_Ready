@@ -1,290 +1,116 @@
-# 🎟️ NeonPulse Ticketing Core - Hito 1
+# 🎟️ NeonPulse Ticketing Platform
 
-[![Java CI with Maven and JaCoCo](https://github.com/your-username/neonpulse-ticketing-core/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/neonpulse-ticketing-core/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Java CI with Maven and JaCoCo](https://github.com/your-username/Fundamentos_de_Java_Globant_Talento_Ready/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/Fundamentos_de_Java_Globant_Talento_Ready/actions)
+[![TypeScript: Strict](https://img.shields.io/badge/TypeScript-Strict%20Mode-blue.svg)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-5.x-646CFF.svg)](https://vitejs.dev/)
 [![Coverage: 100%](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg)]()
 
-> **Módulo:** Fundamentos de Calidad y TDD en Java — **{desafío} latam_**  
-> **Entregable:** Hito 1 — Core de Dominio Puro, Suite Automatizada con JUnit 5 & Mockito (Patrón AAA) y Cobertura 100% con JaCoCo.
+> **Programa:** Fundamentos de Java — **Globant Talento Ready / {desafío} latam_**  
+> **Proyecto Full-Stack Autónomo:** Sistema de Gestión, Emisión y Reserva de Entradas para Eventos (*NeonPulse Ticketing*).
 
 ---
 
-## 📋 Tabla de Contenidos
+## 📋 Resumen de Hitos del Proyecto
 
-1. [Descripción del Proyecto](#-descripción-del-proyecto)
-2. [Glosario Técnico de Negocio (Ubiquitous Language)](#-glosario-técnico-de-negocio-ubiquitous-language)
-3. [Arquitectura del Dominio Puro](#-arquitectura-del-dominio-puro)
-4. [Estructura del Proyecto](#-estructura-del-proyecto)
-5. [Estrategia de Pruebas y Patrón AAA](#-estrategia-de-pruebas-y-patrón-aaa)
-6. [Métricas de Cobertura (JaCoCo 100%)](#-métricas-de-cobertura-jacoco-100)
-7. [Requisitos Previos y Ejecución](#-requisitos-previos-y-ejecución)
+| Hito | Área | Tecnologías | Criterios Clave Cumplidos |
+| :---: | :--- | :--- | :--- |
+| **Hito 1** | **Backend / Core de Dominio Puro** | Java 17+, JUnit 5, Mockito 5, JaCoCo | • Modelo de dominio puro en Java sin acoplamiento a frameworks.<br>• Suite automatizada bajo el **Patrón AAA (Arrange, Act, Assert)**.<br>• Excepciones de negocio con `assertThrows` y dobles de prueba con Mockito.<br>• **100% de cobertura lógica (Line/Branch Coverage)** verificada con JaCoCo. |
+| **Hito 2** | **Frontend Dinámico** | TypeScript (Strict), Vite, HTML5, CSS3 | • **Tipado hermético en TS:** Cero uso de `any`, enums e interfaces estrictas.<br>• **Renderizado seguro del DOM:** Guardias de tipo contra nulidad y captura con `preventDefault()`.<br>• **Asincronía moderna:** Funciones con `async/await`, bloques `try/catch/finally` y estados visuales de carga (spinners y feedback en pantalla). |
 
 ---
 
-## 📖 Descripción del Proyecto
-
-**NeonPulse Ticketing Core** es un motor transaccional de gestión, reserva y emisión de entradas para eventos desarrollado en **Java puro**. El sistema implementa las reglas de negocio críticas para la venta de tickets garantizando:
-
-- **Desacoplamiento total:** Libre de dependencias a frameworks de persistencia (JPA/Hibernate) o infraestructura web (Spring), asegurando portabilidad y testabilidad pura.
-- **Control estricto de concurrencia y stock:** Validación de capacidad de asientos (`Event.reserveSeats`) con transiciones de estado automáticas (`ACTIVE` $\to$ `SOLD_OUT`) y mecanismos de rollback seguro (`Event.releaseSeats`) en caso de rechazo del pago.
-- **Reglas de Descuento por Nivel de Cliente:** Cálculo dinámico de beneficios comerciales según el tier del cliente (`REGULAR` 0%, `PREMIUM` 10%, `VIP` 20%).
-- **Aislamiento de Dependencias:** Inyección por constructor de interfaces/puertos (`EventRepository`, `BookingRepository`, `PaymentGateway`, `NotificationService`) para permitir pruebas unitarias 100% aisladas mediante dobles de prueba con **Mockito**.
-
----
-
-## 📚 Glosario Técnico de Negocio (Ubiquitous Language)
-
-| Término (Inglés) | Concepto en Español | Definición y Regla de Negocio |
-| :--- | :--- | :--- |
-| **`Customer`** | Cliente / Usuario | Entidad que realiza la reserva. Posee un identificador único, nombre, correo electrónico válido y un nivel de membresía (`MembershipTier`). |
-| **`MembershipTier`** | Nivel de Membresía | Clasificación comercial del cliente: `REGULAR` (0% descuento), `PREMIUM` (10% descuento) y `VIP` (20% descuento). |
-| **`Event`** | Evento | Entidad que administra el inventario de asientos. Controla el precio base, capacidad total, asientos disponibles y su estado (`EventStatus`). |
-| **`EventStatus`** | Estado del Evento | `ACTIVE` (disponible para reservas), `SOLD_OUT` (agotado) o `CANCELLED` (cancelado/inactivo). |
-| **`Booking`** | Reserva / Orden | Agregado raíz que agrupa los ítems adquiridos, cliente, cálculo del monto bruto, descuento comercial aplicado, total neto y estado de la orden (`BookingStatus`). |
-| **`BookingItem`** | Ítem de Reserva | Objeto de valor que representa la cantidad de entradas y el subtotal para un evento específico. |
-| **`BookingStatus`** | Estado de la Reserva | `PENDING` (en proceso), `CONFIRMED` (pago aprobado y emitida), `FAILED` (pago rechazado), `CANCELLED` (anulada). |
-| **`PaymentGateway`** | Pasarela de Pagos | Puerto de salida encargado del cobro financiero. Si falla, el sistema ejecuta rollback de inventario. |
-| **`NotificationService`** | Servicio de Notificaciones | Puerto de salida para despachar correos/alertas de confirmación o fallos transaccionales. |
-
----
-
-## 🏛️ Arquitectura del Dominio Puro
-
-```mermaid
-classDiagram
-    class Customer {
-        -String id
-        -String name
-        -String email
-        -MembershipTier tier
-        +getId() String
-        +getName() String
-        +getEmail() String
-        +getTier() MembershipTier
-    }
-
-    class MembershipTier {
-        <<enumeration>>
-        REGULAR
-        PREMIUM
-        VIP
-        +calculateDiscount(double grossAmount) double
-    }
-
-    class Event {
-        -String id
-        -String name
-        -double basePrice
-        -int totalCapacity
-        -int availableSeats
-        -EventStatus status
-        +reserveSeats(int quantity) void
-        +releaseSeats(int quantity) void
-        +isAvailable() boolean
-    }
-
-    class EventStatus {
-        <<enumeration>>
-        ACTIVE
-        SOLD_OUT
-        CANCELLED
-    }
-
-    class Booking {
-        -String id
-        -Customer customer
-        -List~BookingItem~ items
-        -double grossTotal
-        -double discountAmount
-        -double netTotal
-        -BookingStatus status
-        -LocalDateTime createdAt
-        +confirm() void
-        +cancel() void
-        +markAsFailed() void
-    }
-
-    class BookingItem {
-        -String eventId
-        -String eventName
-        -double unitPrice
-        -int quantity
-        -double subtotal
-    }
-
-    class TicketBookingService {
-        -EventRepository eventRepository
-        -BookingRepository bookingRepository
-        -PaymentGateway paymentGateway
-        -NotificationService notificationService
-        +createBooking(Customer, BookingRequest) BookingResponse
-        +cancelBooking(String bookingId) Booking
-    }
-
-    Customer "1" *-- "1" MembershipTier
-    Event "1" *-- "1" EventStatus
-    Booking "1" o-- "1" Customer
-    Booking "1" *-- "1..*" BookingItem
-    TicketBookingService ..> Event
-    TicketBookingService ..> Booking
-```
-
----
-
-## 📁 Estructura del Proyecto
+## 🏛️ Estructura Global del Repositorio
 
 ```text
 .
 ├── .github/
 │   └── workflows/
-│       └── ci.yml                             # Pipeline automatizado GitHub Actions
-├── .gitignore                                 # Exclusiones de build, Maven y entornos IDE
-├── pom.xml                                    # Descriptor Maven con JUnit 5, Mockito y JaCoCo
-├── README.md                                  # Documentación técnica completa
-└── src/
-    ├── main/
-    │   └── java/
-    │       └── com/desafiolatam/ticketing/
-    │           └── domain/
-    │               ├── dto/
-    │               │   ├── BookingRequest.java
-    │               │   └── BookingResponse.java
-    │               ├── exception/
-    │               │   ├── DomainException.java
-    │               │   ├── EventNotFoundException.java
-    │               │   ├── EventNotActiveException.java
-    │               │   ├── InsufficientSeatsException.java
-    │               │   ├── InvalidBookingException.java
-    │               │   └── PaymentFailedException.java
-    │               ├── model/
-    │               │   ├── Booking.java
-    │               │   ├── BookingItem.java
-    │               │   ├── BookingStatus.java
-    │               │   ├── Customer.java
-    │               │   ├── Event.java
-    │               │   ├── EventStatus.java
-    │               │   └── MembershipTier.java
-    │               ├── port/
-    │               │   ├── BookingRepository.java
-    │               │   ├── EventRepository.java
-    │               │   ├── NotificationService.java
-    │               │   └── PaymentGateway.java
-    │               └── service/
-    │                   └── TicketBookingService.java
-    └── test/
-        └── java/
-            └── com/desafiolatam/ticketing/
-                └── domain/
-                    ├── dto/
-                    │   └── BookingDtoTest.java
-                    ├── exception/
-                    │   └── DomainExceptionsTest.java
-                    ├── model/
-                    │   ├── BookingItemTest.java
-                    │   ├── BookingTest.java
-                    │   ├── CustomerTest.java
-                    │   ├── EventTest.java
-                    │   └── MembershipTierTest.java
-                    └── service/
-                        └── TicketBookingServiceTest.java
+│       └── ci.yml                             # Pipeline CI para Backend Java y JaCoCo
+├── .gitignore                                 # Exclusiones para Java, Maven, Node y Vite
+├── pom.xml                                    # Descriptor Maven del Backend (Hito 1)
+├── README.md                                  # Documentación técnica completa (Hitos 1 y 2)
+├── src/                                       # Código fuente del Backend Java (Hito 1)
+│   ├── main/java/com/desafiolatam/ticketing/
+│   │   ├── domain/dto/                        # BookingRequest, BookingResponse
+│   │   ├── domain/exception/                  # Jerarquía de excepciones de negocio
+│   │   ├── domain/model/                      # Customer, Event, Booking, MembershipTier...
+│   │   ├── domain/port/                       # Repositorios, PaymentGateway, NotificationService
+│   │   └── domain/service/                    # TicketBookingService
+│   └── test/java/com/desafiolatam/ticketing/
+│       └── domain/...                         # Suite de pruebas unitarias AAA y Mockito (100% Cobertura)
+└── frontend/                                  # Aplicación Frontend Dinámica (Hito 2)
+    ├── index.html                             # SPA de cartelera y reserva de tickets
+    ├── package.json                           # Configuración y scripts de Vite y TypeScript
+    ├── tsconfig.json                          # Configuración TypeScript en modo estricto
+    ├── vite.config.ts                         # Configuración del servidor de desarrollo Vite
+    └── src/
+        ├── types/index.ts                     # Interfaces, Enums y DTOs herméticos
+        ├── services/
+        │   ├── api.service.ts                 # Servicio asíncrono con async/await y simulación de API
+        │   └── validation.service.ts          # Validador de formularios con guardias de tipo
+        ├── dom/
+        │   ├── dom-helpers.ts                 # Selectores seguros contra nulos y utilidades
+        │   └── ui-renderer.ts                 # Renderizado de componentes, spinners y comprobantes
+        ├── style.css                          # Estilos Cyber Neon / Glassmorphism
+        └── main.ts                            # Controlador principal y listeners de eventos
 ```
 
 ---
 
-## 🧪 Estrategia de Pruebas y Patrón AAA
+## ☕ HITO 1: Backend en Java Puro, TDD y Suite de Pruebas
 
-Todas las pruebas unitarias están implementadas bajo la estructura rigurosa del patrón **AAA (Arrange, Act, Assert)**:
+### Glosario Técnico de Negocio (Ubiquitous Language)
+- **`Customer`:** Cliente registrado con ID, nombre, email validado y nivel de membresía (`MembershipTier`).
+- **`MembershipTier`:** Niveles `REGULAR` (0% dcto), `PREMIUM` (10% dcto) y `VIP` (20% dcto).
+- **`Event`:** Entidad que controla stock de asientos, precio base, capacidad y transiciones de estado (`ACTIVE`, `SOLD_OUT`, `CANCELLED`).
+- **`Booking`:** Agregado raíz con desglose de totales (bruto, descuento, neto) y estados (`PENDING`, `CONFIRMED`, `FAILED`, `CANCELLED`).
+- **`TicketBookingService`:** Servicio orquestador con inyección por constructor de puertos (`EventRepository`, `BookingRepository`, `PaymentGateway`, `NotificationService`).
 
-```java
-@Test
-@DisplayName("Should successfully create booking for REGULAR customer with 0% discount")
-void shouldCreateBookingSuccessfullyForRegularCustomer() {
-    // Arrange
-    Customer customer = createCustomer("CUST-REG", MembershipTier.REGULAR);
-    BookingRequest request = new BookingRequest("EVT-01", 2);
-    Event event = createEvent("EVT-01", 50.0, 10);
-
-    when(eventRepository.findById("EVT-01")).thenReturn(Optional.of(event));
-    when(paymentGateway.charge("CUST-REG", 100.0)).thenReturn(true);
-    when(bookingRepository.save(any(Booking.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-    // Act
-    BookingResponse response = bookingService.createBooking(customer, request);
-
-    // Assert
-    assertNotNull(response);
-    assertEquals("Test Customer", response.getCustomerName());
-    assertEquals(100.0, response.getTotalPaid(), 0.001);
-    assertEquals(BookingStatus.CONFIRMED, response.getStatus());
-    assertEquals(8, event.getAvailableSeats());
-
-    verify(eventRepository, times(1)).save(event);
-    verify(notificationService, times(1)).sendBookingConfirmation(eq(customer), any(Booking.class));
-}
-```
-
-### Características Principales de la Suite de Pruebas:
-- **Control de Excepciones Semánticas:** Uso de `assertThrows` validando el tipo y mensaje exacto de error.
-- **Pruebas Paramétricas:** Uso de `@ParameterizedTest`, `@CsvSource`, `@ValueSource`, `@EnumSource` y `@NullAndEmptySource` para cubrir múltiples combinaciones y valores de borde.
-- **Aislamiento Total con Mockito:** Simulación de contratos mediante `@Mock`, `@InjectMocks`, `when().thenReturn()`, `verify()`, `verifyNoInteractions()` y `ArgumentCaptor`.
-
----
-
-## 📊 Métricas de Cobertura (JaCoCo 100%)
-
-El archivo `pom.xml` incluye la regla de verificación estricta de JaCoCo:
-
-```xml
-<rule>
-    <element>BUNDLE</element>
-    <limits>
-        <limit>
-            <counter>LINE</counter>
-            <value>COVEREDRATIO</value>
-            <minimum>1.00</minimum>
-        </limit>
-        <limit>
-            <counter>BRANCH</counter>
-            <value>COVEREDRATIO</value>
-            <minimum>1.00</minimum>
-        </limit>
-    </limits>
-</rule>
-```
-
-Para generar y visualizar el informe HTML de cobertura:
+### Comandos de Ejecución Backend:
 ```bash
-mvn clean test jacoco:report
+# 1. Compilar clases Java
+mvn clean compile
+
+# 2. Ejecutar suite de pruebas con JUnit 5 y Mockito (Patrón AAA)
+mvn test
+
+# 3. Validar regla de Cobertura Matemática del 100% con JaCoCo
+mvn jacoco:check
 ```
-El informe se generará en: `target/site/jacoco/index.html`.
 
 ---
 
-## 🚀 Requisitos Previos y Ejecución
+## ⚡ HITO 2: Frontend Dinámico con TypeScript y Vite
 
-### Requisitos:
-- **JDK 17** o superior
-- **Apache Maven 3.8+**
+### 1. Modelado y Tipado de Estructuras (Strict TypeScript)
+- Todos los modelos están definidos en [`frontend/src/types/index.ts`](file:///Users/escandalosos/Documents/GitHub/Fundamentos_de_Java_Globant_Talento_Ready/frontend/src/types/index.ts).
+- **Cero uso de `any`:** Todos los datos, retornos y parámetros tienen tipos explícitos.
+- **Enums estrictos:** `EventStatus`, `BookingStatus`, `MembershipTier`, `NotificationType`, `ViewState`.
 
-### Comandos de Ejecución:
+### 2. Renderizado Seguro y Gestión del DOM
+- Captura de elementos mediante funciones con guardias de tipo (`getRequiredElement<T>()` en [`frontend/src/dom/dom-helpers.ts`](file:///Users/escandalosos/Documents/GitHub/Fundamentos_de_Java_Globant_Talento_Ready/frontend/src/dom/dom-helpers.ts)) para evitar referencias nulas en tiempo de ejecución.
+- Intercepción de eventos de formulario con `e.preventDefault()`, impidiendo la recarga nativa del navegador.
+- Validación estricta y cálculo de precios en tiempo real según la membresía seleccionada.
 
-1. **Compilar el proyecto:**
-   ```bash
-   mvn clean compile
-   ```
+### 3. Simulación Asíncrona con Bloques de Control (`async/await`)
+- [`frontend/src/services/api.service.ts`](file:///Users/escandalosos/Documents/GitHub/Fundamentos_de_Java_Globant_Talento_Ready/frontend/src/services/api.service.ts) implementa llamadas de red simuladas con latencia y manejo de errores encapsulados en `try/catch/finally`.
+- **Feedback visual dinámico:**
+  - Spinners de carga mientras se consultan los eventos.
+  - Bloqueo y animación en el botón de pago durante la transacción ("Procesando pago y emitiendo tickets...").
+  - Renderizado de comprobante de compra confirmado (Voucher oficial con ID de reserva y desglose financiero) o alertas descriptivas de error en caso de fallo.
 
-2. **Ejecutar la suite de tests unitarios:**
-   ```bash
-   mvn test
-   ```
+### Comandos de Ejecución Frontend:
+```bash
+# Navegar a la carpeta frontend
+cd frontend
 
-3. **Verificar la cobertura de código (100% Line/Branch):**
-   ```bash
-   mvn jacoco:check
-   ```
+# 1. Instalar dependencias
+npm install
 
-4. **Empaquetar el proyecto:**
-   ```bash
-   mvn package
-   ```
+# 2. Iniciar servidor de desarrollo con Vite
+npm run dev
+
+# 3. Compilar para producción (Typecheck + Bundling)
+npm run build
+```
 

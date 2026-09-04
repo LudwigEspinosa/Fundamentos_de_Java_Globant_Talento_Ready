@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎟️</text></svg>" />
+    <title>NeonPulse Ticketing - Cartelera & Reserva de Entradas</title>
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <!-- Main Application Header -->
+    <header class="app-header">
+      <div class="container header-content">
+        <div class="logo">
+          <span>⚡ NEONPULSE</span>
+          <span class="logo-badge">Hito 2 Frontend</span>
+        </div>
+        <nav class="header-nav">
+          <button type="button" class="btn btn--secondary" id="btn-refresh-catalog" style="width: auto; padding: 0.5rem 1rem;">
+            🔄 Actualizar Cartelera
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <!-- Hero Banner -->
+      <section class="hero-section">
+        <h1 class="hero-title">Emisión y Reserva de <span>Entradas</span></h1>
+        <p class="hero-subtitle">
+          Explora la cartelera exclusiva de conciertos y festivales. Selecciona tu evento y asegura tus tickets con confirmación inmediata.
+        </p>
+      </section>
+
+      <!-- Global Notification Container -->
+      <div id="notification-container" aria-live="polite"></div>
+
+      <!-- Events Catalog Section -->
+      <section id="catalog-section">
+        <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <h2 style="font-size: 1.5rem; color: var(--text-primary);">🎵 Cartelera de Eventos Disponibles</h2>
+        </div>
+        <div id="events-container" class="events-grid">
+          <!-- Dynamically populated by UIRenderer -->
+        </div>
+      </section>
+
+      <!-- Booking Form Section (Hidden by default) -->
+      <section id="booking-section" class="booking-section" style="display: none;">
+        <div class="booking-header">
+          <h2>🎟️ Reserva de Entradas</h2>
+          <button type="button" class="btn btn--secondary" id="btn-close-booking" style="width: auto; padding: 0.4rem 0.8rem;">
+            ✕ Cancelar
+          </button>
+        </div>
+
+        <form id="booking-form" novalidate>
+          <input type="hidden" id="input-event-id" name="eventId" />
+
+          <!-- Selected Event Banner Info -->
+          <div id="selected-event-info" style="background: rgba(0, 240, 255, 0.08); border: 1px solid var(--border-glow); padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem;">
+            <!-- Populated via TypeScript on event selection -->
+          </div>
+
+          <!-- Customer Name -->
+          <div class="form-group">
+            <label for="input-customer-name" class="form-label">Nombre Completo del Titular *</label>
+            <input
+              type="text"
+              id="input-customer-name"
+              name="customerName"
+              class="form-input"
+              placeholder="Ej: Alan Turing"
+              required
+            />
+            <span class="form-error" id="error-customer-name"></span>
+          </div>
+
+          <!-- Customer Email -->
+          <div class="form-group">
+            <label for="input-customer-email" class="form-label">Correo Electrónico de Confirmación *</label>
+            <input
+              type="email"
+              id="input-customer-email"
+              name="customerEmail"
+              class="form-input"
+              placeholder="Ej: alan.turing@enigma.org"
+              required
+            />
+            <span class="form-error" id="error-customer-email"></span>
+          </div>
+
+          <!-- Membership Tier -->
+          <div class="form-group">
+            <label for="select-membership-tier" class="form-label">Nivel de Membresía / Descuento Fidelidad</label>
+            <select id="select-membership-tier" name="membershipTier" class="form-select">
+              <option value="REGULAR">REGULAR (Sin descuento)</option>
+              <option value="PREMIUM">PREMIUM (10% de descuento)</option>
+              <option value="VIP">VIP (20% de descuento exclusivo)</option>
+            </select>
+          </div>
+
+          <!-- Quantity -->
+          <div class="form-group">
+            <label for="input-quantity" class="form-label">Cantidad de Entradas *</label>
+            <input
+              type="number"
+              id="input-quantity"
+              name="quantity"
+              class="form-input"
+              min="1"
+              max="10"
+              value="1"
+              required
+            />
+            <span class="form-error" id="error-quantity"></span>
+          </div>
+
+          <!-- Live Pricing Summary -->
+          <div id="pricing-preview-container"></div>
+
+          <!-- Form Submit Button with Loading State -->
+          <button type="submit" id="btn-submit-booking" class="btn btn--primary">
+            🔒 Confirmar y Pagar Reserva
+          </button>
+        </form>
+      </section>
+
+      <!-- Confirmation Voucher Container (Hidden by default) -->
+      <section id="confirmation-section" style="display: none;">
+        <!-- Populated via UIRenderer on successful booking -->
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <div class="container">
+        <p>NeonPulse Ticketing Core © 2026 - Módulo 2: Frontend Dinámico con TypeScript & Vite ({desafío} latam_)</p>
+      </div>
+    </footer>
+
+    <!-- Application Script Entry Point -->
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>

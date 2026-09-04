@@ -1,12 +1,20 @@
-# Excluir PDFs y material del curso / enunciados
+# Excluir PDFs y material del curso / enunciados de hitos
 Hito1/
+Hito2/
 *.pdf
 
-# Directorios de compilación
+# Directorios de compilación Backend (Java / Maven)
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+# Directorios de compilación y dependencias Frontend (Node / Vite)
+node_modules/
+dist/
+dist-ssr/
+*.local
+.npm
 
 ### IntelliJ IDEA ###
 .idea/
