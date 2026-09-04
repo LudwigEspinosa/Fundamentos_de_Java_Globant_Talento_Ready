@@ -3,7 +3,15 @@ Hito1/
 Hito2/
 Hito3/
 Hito4/
+HitoFinal/
 *.pdf
+
+# Variables de entorno y secretos locales (Seguridad de Grado de Producción)
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
 
 # Directorios de compilación Backend (Java / Maven / Spring Boot)
 target/
