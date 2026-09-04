@@ -1,7 +1,7 @@
 package com.desafiolatam.ticketing.domain.exception;
 
 /**
- * Thrown when a payment attempt is rejected by the payment gateway.
+ * Thrown when financial transaction processing is rejected by external gateways.
  */
 public class PaymentFailedException extends DomainException {
 

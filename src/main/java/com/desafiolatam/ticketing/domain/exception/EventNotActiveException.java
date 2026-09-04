@@ -1,7 +1,7 @@
 package com.desafiolatam.ticketing.domain.exception;
 
 /**
- * Thrown when attempting an operation on an inactive, cancelled or closed event.
+ * Thrown when trying to execute operations on an inactive or cancelled event.
  */
 public class EventNotActiveException extends DomainException {
 

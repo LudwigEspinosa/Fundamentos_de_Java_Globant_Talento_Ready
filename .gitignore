@@ -1,6 +1,7 @@
 # Excluir PDFs y material del curso / enunciados de hitos
 Hito1/
 Hito2/
+Hito3/
 *.pdf
 
 # Directorios de compilación Backend (Java / Maven)

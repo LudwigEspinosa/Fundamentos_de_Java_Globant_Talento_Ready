@@ -1,7 +1,7 @@
 package com.desafiolatam.ticketing.domain.exception;
 
 /**
- * Thrown when the requested number of tickets exceeds available capacity.
+ * Thrown when requested reservation quantity exceeds the available capacity invariant.
  */
 public class InsufficientSeatsException extends DomainException {
 
