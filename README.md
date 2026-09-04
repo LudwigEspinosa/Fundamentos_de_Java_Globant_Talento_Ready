@@ -1,10 +1,12 @@
 # 🎟️ NeonPulse Ticketing Platform
 
 [![Java CI with Maven and JaCoCo](https://github.com/your-username/Fundamentos_de_Java_Globant_Talento_Ready/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/Fundamentos_de_Java_Globant_Talento_Ready/actions)
+[![Spring Boot 3](https://img.shields.io/badge/Spring%20Boot-3.2.3-6DB33F.svg)](https://spring.io/projects/spring-boot)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791.svg)](https://www.postgresql.org/)
+[![Docker Compose](https://img.shields.io/badge/Docker-Compose-2496ED.svg)](https://www.docker.com/)
+[![Swagger / OpenAPI](https://img.shields.io/badge/OpenAPI-Swagger%20UI%203-85EA2D.svg)](https://swagger.io/)
 [![Clean Architecture](https://img.shields.io/badge/Architecture-Clean%20%26%20DDD-orange.svg)]()
 [![TypeScript: Strict](https://img.shields.io/badge/TypeScript-Strict%20Mode-blue.svg)](https://www.typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/Vite-5.x-646CFF.svg)](https://vitejs.dev/)
-[![Coverage: 100%](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg)]()
 
 > **Programa:** Fundamentos de Java — **Globant Talento Ready / {desafío} latam_**  
 > **Proyecto Full-Stack Autónomo:** Sistema de Gestión, Emisión y Reserva de Entradas para Eventos (*NeonPulse Ticketing*).
@@ -17,37 +19,61 @@
 | :---: | :--- | :--- | :--- |
 | **Hito 1** | **Backend / Core de Dominio Puro** | Java 17+, JUnit 5, Mockito 5, JaCoCo | • Modelo de dominio puro en Java sin acoplamiento a frameworks.<br>• Suite automatizada bajo el **Patrón AAA (Arrange, Act, Assert)**.<br>• Excepciones de negocio con `assertThrows` y dobles de prueba con Mockito.<br>• **100% de cobertura lógica (Line/Branch Coverage)** verificada con JaCoCo. |
 | **Hito 2** | **Frontend Dinámico** | TypeScript (Strict), Vite, HTML5, CSS3 | • **Tipado hermético en TS:** Cero uso de `any`, enums e interfaces estrictas.<br>• **Renderizado seguro del DOM:** Guardias de tipo contra nulidad y captura con `preventDefault()`.<br>• **Asincronía moderna:** Funciones con `async/await`, bloques `try/catch/finally` y estados visuales de carga (spinners y feedback en pantalla). |
-| **Hito 3** | **Arquitectura Limpia & DDD** | Java 17+ Records, Clean Architecture, DDD | • **Separación en capas desacopladas:** `domain` (puro), `application` (casos de uso) e `infrastructure` (adaptadores en memoria).<br>• **Patrones tácticos DDD:** Entidades, Aggregate Roots y Value Objects inmutables con `record` (`Email`, `Money`, `SeatCapacity`, IDs).<br>• **Contratos de Repositorios:** Casos de uso desacoplados por inyección por constructor. |
+| **Hito 3** | **Arquitectura Limpia & DDD** | Java 17+ Records, Clean Architecture, DDD | • **Separación en capas desacopladas:** `domain` (puro), `application` (casos de uso) e `infrastructure` (adaptadores).<br>• **Patrones tácticos DDD:** Entidades, Aggregate Roots y Value Objects inmutables con `record` (`Email`, `Money`, `SeatCapacity`, IDs).<br>• **Contratos de Repositorios:** Casos de uso desacoplados por inyección por constructor. |
+| **Hito 4** | **Microservicios, Persistencia & Docker** | Spring Boot 3, PostgreSQL, JPA, Docker Compose, Swagger UI | • **Endpoints REST Semánticos:** `/api/v1/events` y `/api/v1/bookings` con `@RestControllerAdvice` centralizado.<br>• **Persistencia Relacional Real:** PostgreSQL 16 virtualizado con `docker-compose.yml` y mapeo JPA/Hibernate con `JpaRepository`.<br>• **OpenAPI y Perfiles Seguros:** Swagger-UI activo en `dev` y herméticamente bloqueado en `prod`. Colección HTTP para Bruno/Postman. |
 
 ---
 
-## 🏛️ Arquitectura Limpia y Diseño Guiado por el Dominio (Hito 3)
+## 🏛️ Arquitectura de Microservicio y Capas Limpias (Hito 4)
 
-El backend de Java implementa los principios de **Clean Architecture** (Arquitectura Limpia) y **Domain-Driven Design (DDD)** con la siguiente regla de dependencias:
+El backend de NeonPulse combina **Clean Architecture (DDD)** con el ecosistema productivo de **Spring Boot 3**:
 
 ```mermaid
 graph TD
-    subgraph Infrastructure ["Infraestructura (Adaptadores y Persistencia)"]
-        InMemoryRepo["InMemoryEventRepository / InMemoryBookingRepository"]
-        Gateways["SimulatedPaymentGateway / ConsoleNotificationService"]
+    subgraph Client ["Clientes y Consumidores"]
+        WebSPA["Frontend SPA (TypeScript/Vite)"]
+        Bruno["Bruno / Postman / Swagger-UI"]
     end
 
-    subgraph Application ["Aplicación (Casos de Uso & DTOs)"]
-        UseCases["CreateBookingUseCase / CancelBookingUseCase / GetEventCatalogUseCase"]
-        Ports["PaymentGateway / NotificationService"]
+    subgraph Infrastructure_Web ["Infraestructura Web (Spring Boot Web REST)"]
+        EventCtrl["EventController (/api/v1/events)"]
+        BookingCtrl["BookingController (/api/v1/bookings)"]
+        Advice["GlobalExceptionHandler (@RestControllerAdvice)"]
     end
 
-    subgraph Domain ["Dominio (Reglas de Negocio Puras)"]
-        Aggregates["Aggregate Roots: Event, Booking"]
-        Entities["Entity: Customer"]
-        ValueObjects["Value Objects (Records): Money, SeatCapacity, Email, BookingItem, IDs"]
-        RepoContracts["Interfaces de Repositorio: EventRepository, BookingRepository, CustomerRepository"]
-        Exceptions["DomainException, InvalidDomainException, InsufficientSeatsException..."]
+    subgraph Application ["Capa de Aplicación (Casos de Uso)"]
+        CreateBooking["CreateBookingUseCase"]
+        CancelBooking["CancelBookingUseCase"]
+        GetCatalog["GetEventCatalogUseCase"]
     end
 
-    Infrastructure --> Application
-    Infrastructure --> Domain
-    Application --> Domain
+    subgraph Domain ["Capa de Dominio (Núcleo Puro)"]
+        Aggregates["Event / Booking (Aggregate Roots)"]
+        ValueObjects["Money, SeatCapacity, Email, IDs (Records)"]
+        RepoContracts["EventRepository / BookingRepository"]
+    end
+
+    subgraph Infrastructure_DB ["Infraestructura de Persistencia (JPA + PostgreSQL)"]
+        JPAAdapters["JpaEventRepositoryAdapter / JpaBookingRepositoryAdapter"]
+        SpringData["SpringDataEventRepository / SpringDataBookingRepository"]
+        DockerDB[("PostgreSQL 16 (Docker Compose)")]
+    end
+
+    Client --> EventCtrl
+    Client --> BookingCtrl
+    EventCtrl --> GetCatalog
+    BookingCtrl --> CreateBooking
+    BookingCtrl --> CancelBooking
+    CreateBooking --> Domain
+    CancelBooking --> Domain
+    GetCatalog --> Domain
+    CreateBooking --> JPAAdapters
+    CancelBooking --> JPAAdapters
+    GetCatalog --> JPAAdapters
+    JPAAdapters --> SpringData
+    SpringData --> DockerDB
+    Advice -.-> EventCtrl
+    Advice -.-> BookingCtrl
 ```
 
 ---
@@ -56,88 +82,85 @@ graph TD
 
 ```text
 .
-├── .github/
-│   └── workflows/
-│       └── ci.yml                             # Pipeline CI para Backend Java y JaCoCo
-├── .gitignore                                 # Exclusiones para Java, Maven, Node y Vite
-├── pom.xml                                    # Descriptor Maven del Backend (Hitos 1 y 3)
-├── README.md                                  # Documentación técnica completa (Hitos 1, 2 y 3)
-├── src/                                       # Backend Java en Capas Limpias (Hitos 1 y 3)
-│   ├── main/java/com/desafiolatam/ticketing/
-│   │   ├── domain/                            # CAPA DE DOMINIO (Pura, sin frameworks)
-│   │   │   ├── model/
-│   │   │   │   ├── aggregate/                 # Event (Root), Booking (Root)
-│   │   │   │   ├── entity/                    # Customer
-│   │   │   │   ├── valueobject/               # Money, SeatCapacity, Email, BookingItem, IDs (records)
-│   │   │   │   └── enumtype/                  # EventStatus, BookingStatus, MembershipTier
-│   │   │   ├── exception/                     # Jerarquía de excepciones de negocio
-│   │   │   └── repository/                    # Contratos de repositorios (EventRepository, etc.)
-│   │   │
-│   │   ├── application/                       # CAPA DE APLICACIÓN (Casos de Uso)
-│   │   │   ├── dto/                           # BookingRequestDTO, BookingResponseDTO, EventResponseDTO
-│   │   │   ├── port/                          # PaymentGateway, NotificationService
-│   │   │   └── usecase/                       # CreateBookingUseCase, CancelBookingUseCase, GetEventCatalogUseCase
-│   │   │
-│   │   └── infrastructure/                    # CAPA DE INFRAESTRUCTURA (Adaptadores)
-│   │       ├── adapter/                       # SimulatedPaymentGateway, ConsoleNotificationService
-│   │       └── persistence/inmemory/          # InMemoryEventRepository, InMemoryBookingRepository...
-│   │
-│   └── test/java/com/desafiolatam/ticketing/  # Suite de pruebas unitarias AAA y Mockito (100% Cobertura)
-│       ├── domain/...                         # Tests de Value Objects, Records, Entidades y Agregados
-│       ├── application/...                    # Tests de Casos de Uso con dobles de prueba Mockito
-│       └── infrastructure/...                 # Tests de adaptadores y repositorios en memoria
-│
-└── frontend/                                  # Aplicación Frontend Dinámica (Hito 2)
-    ├── index.html                             # SPA de cartelera y reserva de tickets
-    ├── package.json                           # Configuración y scripts de Vite y TypeScript
-    ├── tsconfig.json                          # Configuración TypeScript en modo estricto
-    ├── vite.config.ts                         # Configuración del servidor de desarrollo Vite
-    └── src/
-        ├── types/index.ts                     # Interfaces, Enums y DTOs herméticos
-        ├── services/                          # API asíncrona (async/await) y validador
-        ├── dom/                               # Selectores seguros contra nulos y UI renderer
-        ├── style.css                          # Estilos Cyber Neon / Glassmorphism
-        └── main.ts                            # Controlador principal y listeners
+├── docker-compose.yml                         # Virtualización de PostgreSQL 16
+├── pom.xml                                    # Descriptor Maven (Spring Boot 3 + JPA + Swagger)
+├── README.md                                  # Documentación técnica de todos los Hitos
+├── contracts/
+│   └── neonpulse-api.http                     # Colección HTTP para Bruno, Postman o VSCode REST Client
+├── src/
+│   ├── main/
+│   │   ├── java/com/desafiolatam/ticketing/
+│   │   │   ├── NeonPulseApplication.java      # Entry point Spring Boot 3
+│   │   │   ├── domain/                        # Dominio Puro (Aggregates, Value Objects, Repositorios)
+│   │   │   ├── application/                   # Casos de Uso (CreateBooking, CancelBooking, GetCatalog)
+│   │   │   └── infrastructure/
+│   │   │       ├── config/                    # Configuración OpenAPI (@Profile dev) y Beans
+│   │   │       ├── persistence/               # Entidades JPA, JpaRepository y Adaptadores
+│   │   │       └── web/                       # Controladores REST y @RestControllerAdvice
+│   │   └── resources/
+│   │       ├── application.yml                # Configuración base
+│   │       ├── application-dev.yml            # Perfil dev (PostgreSQL + Swagger activo)
+│   │       ├── application-prod.yml           # Perfil prod (Swagger bloqueado)
+│   │       ├── application-test.yml           # Perfil test (H2 in-memory)
+│   │       └── data.sql                       # Semilla de eventos iniciales
+│   └── test/
+│       └── java/com/desafiolatam/ticketing/   # Tests de Dominio, Casos de Uso y MockMvc
+└── frontend/                                  # Frontend Dinámico (TypeScript + Vite)
 ```
 
 ---
 
-## 🎯 Patrones Tácticos de DDD Implementados (Hito 3)
+## 🐳 Despliegue de Base de Datos con Docker Compose (Hito 4)
 
-### 1. Objetos de Valor Inmutables con Java `record`
-- **`Email`:** Auto-valida formato con expresión regular y normaliza a minúsculas.
-- **`Money`:** Encapsula operaciones financieras de suma, resta, multiplicación y comparación, redondeando a 2 decimales y previniendo valores negativos.
-- **`SeatCapacity`:** Controla la capacidad total y asientos disponibles, asegurando que `0 <= available <= total` y proveyendo métodos `reserve` y `release`.
-- **`BookingItem`:** Línea de detalle inmutable que auto-calcula su subtotal como `unitPrice * quantity`.
-- **Identificadores fuertemente tipados (`EventId`, `CustomerId`, `BookingId`):** Eliminan el *Primitive Obsession* evitando confusiones de IDs genéricos de tipo `String`.
+Para levantar la base de datos PostgreSQL en tu entorno local:
 
-### 2. Entidades y Agregados (Aggregate Roots)
-- **`Event` (Aggregate Root):** Protege la consistencia de su inventario (`SeatCapacity`) y transiciones de estado (`ACTIVE` $\leftrightarrow$ `SOLD_OUT`).
-- **`Booking` (Aggregate Root):** Encapsula su lista de `BookingItem`s, valida el cliente y garantiza el cálculo matemático de su total bruto, descuento y total neto.
-- **`Customer` (Entity):** Representa al cliente con ciclo de vida e identidad basada en su `CustomerId`.
+```bash
+# 1. Iniciar el contenedor de PostgreSQL en segundo plano
+docker compose up -d
 
-### 3. Casos de Uso Desacoplados por Contratos
-- **`CreateBookingUseCase`:** Orquesta la validación, reserva de asientos en el agregado, cálculo de descuentos por membresía, cobro en pasarela y despacho de notificaciones con rollback automático si el pago es rechazado.
-- **`CancelBookingUseCase`:** Libera los asientos en el evento correspondiente y marca la orden como `CANCELLED`.
-- **`GetEventCatalogUseCase`:** Retorna la lista de eventos disponibles mapeados a DTOs de salida.
+# 2. Verificar que el contenedor esté saludable (healthy)
+docker compose ps
+
+# 3. Para detener el contenedor cuando finalices
+docker compose down
+```
 
 ---
 
-## 🧪 Ejecución de Tests y Cobertura 100% con JaCoCo
+## 🚀 Ejecución del Backend con Spring Boot 3
 
 ```bash
-# 1. Compilar clases Java
-mvn clean compile
+# 1. Compilar y ejecutar la suite de pruebas unitarias e integración
+mvn clean test
 
-# 2. Ejecutar la suite completa de tests unitarios (JUnit 5 + Mockito)
-mvn test
+# 2. Iniciar el microservicio con el perfil de desarrollo (dev)
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
-# 3. Validar regla de Cobertura Matemática del 100% con JaCoCo
-mvn jacoco:check
+# 3. Acceder a Swagger-UI en el navegador (solo en dev)
+# URL: http://localhost:8080/swagger-ui.html
+# API Docs JSON: http://localhost:8080/v3/api-docs
+```
 
-# 4. Generar reporte HTML de cobertura
-mvn jacoco:report
-# Reporte disponible en: target/site/jacoco/index.html
+---
+
+## 📡 Endpoints REST y Manejo de Errores
+
+| Método | Endpoint | Descripción | Código Éxito | Códigos Error Controlados |
+| :---: | :--- | :--- | :---: | :---: |
+| `GET` | `/api/v1/events` | Consulta de la cartelera completa de eventos | `200 OK` | `500` |
+| `GET` | `/api/v1/events/{id}` | Consulta de evento específico por identificador | `200 OK` | `404 NOT_FOUND` |
+| `POST` | `/api/v1/bookings` | Emisión y compra de entradas con descuento por tier | `201 CREATED` | `400 BAD_REQUEST`, `402 PAYMENT_REQUIRED`, `404 NOT_FOUND`, `409 CONFLICT` |
+| `POST` | `/api/v1/bookings/{id}/cancel` | Anulación de reserva y liberación de inventario | `200 OK` | `400 BAD_REQUEST`, `404 NOT_FOUND` |
+
+### Formato Unificado de Error (`@RestControllerAdvice`):
+```json
+{
+  "timestamp": "2026-08-30T17:00:00",
+  "status": 409,
+  "error": "Conflict",
+  "message": "Stock insuficiente: Solicitaste 50 entradas pero solo quedan 5 disponibles.",
+  "path": "/api/v1/bookings"
+}
 ```
 
 ---
@@ -146,14 +169,8 @@ mvn jacoco:report
 
 ```bash
 cd frontend
-
-# 1. Instalar dependencias
 npm install
-
-# 2. Iniciar servidor de desarrollo
 npm run dev
-
-# 3. Compilar para producción (Typecheck + Bundling)
-npm run build
+# URL: http://localhost:3000
 ```
 

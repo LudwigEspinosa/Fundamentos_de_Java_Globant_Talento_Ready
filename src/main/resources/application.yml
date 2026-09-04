@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: neonpulse-ticketing-service
+  profiles:
+    active: dev
+  main:
+    banner-mode: console
+
+server:
+  port: 8080
+  error:
+    include-message: always
+    include-binding-errors: always

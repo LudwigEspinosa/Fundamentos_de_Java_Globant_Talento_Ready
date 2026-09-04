@@ -1,0 +1,67 @@
+### ==========================================================================
+### NeonPulse Ticketing Platform - API Contract Testing (Hito 4)
+### Test collection for Bruno, Postman or VS Code REST Client
+### ==========================================================================
+
+@baseUrl = http://localhost:8080/api/v1
+
+### 1. Consultar Catálogo Completo de Eventos
+GET {{baseUrl}}/events
+Accept: application/json
+
+###
+
+### 2. Consultar Evento Específico por ID (EVT-001)
+GET {{baseUrl}}/events/EVT-001
+Accept: application/json
+
+###
+
+### 3. Consultar Evento Inexistente (Caso 404 NOT_FOUND)
+GET {{baseUrl}}/events/EVT-999
+Accept: application/json
+
+###
+
+### 4. Crear Reserva de Entradas Exitosa (Cliente VIP con 20% descuento)
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+Accept: application/json
+
+{
+  "customerId": "CUST-001",
+  "eventId": "EVT-001",
+  "quantity": 2
+}
+
+###
+
+### 5. Crear Reserva con Cantidad Inválida (Caso 400 BAD_REQUEST)
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+Accept: application/json
+
+{
+  "customerId": "CUST-001",
+  "eventId": "EVT-001",
+  "quantity": 0
+}
+
+###
+
+### 6. Crear Reserva en Evento Agotado (Caso 409 CONFLICT)
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+Accept: application/json
+
+{
+  "customerId": "CUST-002",
+  "eventId": "EVT-003",
+  "quantity": 2
+}
+
+###
+
+### 7. Consultar Documentación OpenAPI / Swagger-UI (Solo perfil dev)
+GET http://localhost:8080/v3/api-docs
+Accept: application/json

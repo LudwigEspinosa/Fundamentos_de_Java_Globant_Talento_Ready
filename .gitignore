@@ -2,13 +2,18 @@
 Hito1/
 Hito2/
 Hito3/
+Hito4/
 *.pdf
 
-# Directorios de compilación Backend (Java / Maven)
+# Directorios de compilación Backend (Java / Maven / Spring Boot)
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+# Base de datos local y docker volumes
+postgres_data/
+*.db
 
 # Directorios de compilación y dependencias Frontend (Node / Vite)
 node_modules/
